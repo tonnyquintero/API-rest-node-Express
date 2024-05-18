@@ -14,21 +14,16 @@ router.get('/', (req, res) => {
 // Metodo POST
   router.post('/', (req, res) => {
     const body = req.body;
-    res.status(201).json({
-      message: "created",
-      data: body
-    })
+    const newProduct = service.create(body)
+    res.status(201).json(newProduct)
   })
 
 // Metodo PATCH => Cambia de forma parcial algunas cosas
 router.patch('/:id', (req, res) => {
-  const id = req.params
+  const { id } = req.params
   const body = req.body;
-  res.json({
-    message: "partial updated",
-    data: body,
-    id,
-  })
+  const product = service.update(id, body)
+  res.json(product)
 })
 
 // Metodo PUT
@@ -44,11 +39,9 @@ router.put('/:id', (req, res) => {
 
 // Metodo DELETE
 router.delete('/:id', (req, res) => {
-  const id = req.params
-  res.json({
-    message: "deleted",
-    id,
-  })
+  const { id } = req.params
+  const rta = service.delete(id)
+  res.json(rta)
 })
 
 
