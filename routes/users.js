@@ -1,30 +1,78 @@
 const express = require('express')
-const { faker } = require('@faker-js/faker')
+const UsersService = require('../services/users')
 
 const router = express.Router()
+const service = new UsersService()
 
 // -----------QUERY PARAMS---------
+// router.get('/', (req, res) => {
+//   const { limit, offset } = req.query;
+//   if (limit && offset) {
+//     res.json({
+//       limit,
+//       offset
+//     })
+//   } else {
+//     res.send('No hay parametros')
+//   }
+// })
+
+// Metodo GET
 router.get('/', (req, res) => {
-  const { limit, offset } = req.query;
-  if (limit && offset) {
-    res.json({
-      limit,
-      offset
-    })
-  } else {
-    res.send('No hay parametros')
-  }
+  const users = service.find()
+  res.json(users)
 })
 
+// Metodo POST
+  router.post('/', (req, res) => {
+    const body = req.body;
+    const newUser = service.create(body)
+    res.status(201).json(newUser)
+  })
 
-router.get('/:userId/products/:productId', (req, res) => {
-  const { userId, productID } = req.params
+// Metodo PATCH => Cambia de forma parcial algunas cosas
+router.patch('/:id', (req, res) => {
+  const { id } = req.params
+  const body = req.body;
+  const user = service.update(id, body)
+  res.json(user)
+})
+
+// Metodo PUT
+router.put('/:id', (req, res) => {
+  const id = req.params
+  const body = req.body;
   res.json({
-    userId,
-    productID,
-    name: 'product 2',
-    price: 2500
+    message: "updated",
+    data: body,
+    id,
   })
 })
+
+// Metodo DELETE
+router.delete('/:id', (req, res) => {
+  const { id } = req.params
+  const rta = service.delete(id)
+  res.json(rta)
+})
+
+
+// OJOOO => los endpoints que tengas de forma especifica deben ir ANTES de los endpoints de forma dinámica
+// Si este endpoint se coloca despues del dinámico de la línea 33 lo va a tomar como un id
+router.get('/filter', (req, res) => {
+  res.send('Esto es un filter')
+})
+
+
+// Metodo GET one product
+router.get('/:id', (req, res) => {
+  const {id} = req.params;
+  const user = service.findOne(id)
+  res.json(user)
+});
+
+module.exports = router
+
+
 
 module.exports = router
