@@ -18,42 +18,60 @@ const service = new UsersService()
 // })
 
 // Metodo GET
-router.get('/', (req, res) => {
-  const users = service.find()
+router.get('/', async (req, res) => {
+  const users = await service.find()
   res.json(users)
 })
 
 // Metodo POST
-  router.post('/', (req, res) => {
+  router.post('/', async (req, res) => {
     const body = req.body;
-    const newUser = service.create(body)
+    const newUser = await service.create(body)
     res.status(201).json(newUser)
   })
 
 // Metodo PATCH => Cambia de forma parcial algunas cosas
-router.patch('/:id', (req, res) => {
-  const { id } = req.params
-  const body = req.body;
-  const user = service.update(id, body)
-  res.json(user)
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const body = req.body;
+    const user = await service.update(id, body)
+    res.json(user)
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    })
+  }
 })
 
 // Metodo PUT
-router.put('/:id', (req, res) => {
-  const id = req.params
-  const body = req.body;
-  res.json({
-    message: "updated",
-    data: body,
-    id,
+router.put('/:id', async (req, res) => {
+  try {
+    const id = req.params
+    const body = req.body;
+    res.json({
+      message: "updated",
+      data: body,
+      id,
   })
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    })
+  }
 })
 
 // Metodo DELETE
-router.delete('/:id', (req, res) => {
-  const { id } = req.params
-  const rta = service.delete(id)
-  res.json(rta)
+router.delete('/:id', async(req, res) => {
+  try {
+    const { id } = req.params
+    const rta = await service.delete(id)
+    res.json(rta)
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    })
+  }
 })
 
 
@@ -65,10 +83,16 @@ router.get('/filter', (req, res) => {
 
 
 // Metodo GET one product
-router.get('/:id', (req, res) => {
-  const {id} = req.params;
-  const user = service.findOne(id)
-  res.json(user)
+router.get('/:id', async (req, res) => {
+  try {
+    const {id} = req.params;
+    const user = await service.findOne(id)
+    res.json(user)
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    })
+  }
 });
 
 module.exports = router
