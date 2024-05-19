@@ -31,21 +31,19 @@ router.get('/', async (req, res) => {
   })
 
 // Metodo PATCH => Cambia de forma parcial algunas cosas
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     const body = req.body;
     const user = await service.update(id, body)
     res.json(user)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
 // Metodo PUT
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
   try {
     const id = req.params
     const body = req.body;
@@ -55,22 +53,18 @@ router.put('/:id', async (req, res) => {
       id,
   })
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
 // Metodo DELETE
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', async(req, res, next) => {
   try {
     const { id } = req.params
     const rta = await service.delete(id)
     res.json(rta)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
@@ -83,15 +77,13 @@ router.get('/filter', (req, res) => {
 
 
 // Metodo GET one product
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const {id} = req.params;
     const user = await service.findOne(id)
     res.json(user)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 });
 

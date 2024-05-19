@@ -19,16 +19,14 @@ router.get('/', async (req, res) => {
   })
 
 // Metodo PATCH => Cambia de forma parcial algunas cosas
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     const body = req.body;
     const product = await service.update(id, body)
     res.json(product)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
@@ -44,15 +42,13 @@ router.put('/:id', async (req, res) => {
 })
 
 // Metodo DELETE
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     const rta = await service.delete(id)
     res.json(rta)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
@@ -71,9 +67,7 @@ router.get('/:id', async (req, res, next) => {
     const product = await service.findOne(id)
     res.json(product)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 });
 
