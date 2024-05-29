@@ -1,5 +1,8 @@
 const express = require('express')
 const ProductsService = require('../services/products')
+const validatorHander = require('../middlewares/validatorHandler')
+
+const { createProductSchema, updateProductSchema, getProductSchema } = require('../schemas/products')
 
 
 const router = express.Router()
@@ -12,23 +15,28 @@ router.get('/', async (req, res) => {
 })
 
 // Metodo POST
-  router.post('/', async (req, res) => {
+  router.post('/',
+  validatorHander(createProductSchema, 'body'),
+  async (req, res) => {
     const body = req.body;
     const newProduct = await service.create(body)
     res.status(201).json(newProduct)
   })
 
 // Metodo PATCH => Cambia de forma parcial algunas cosas
-router.patch('/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const body = req.body;
-    const product = await service.update(id, body)
-    res.json(product)
-  } catch (error) {
-    next(error)
-  }
-})
+router.patch('/:id',
+  validatorHander(getProductSchema, 'params'),
+  validatorHander(updateProductSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params
+      const body = req.body;
+      const product = await service.update(id, body)
+      res.json(product)
+    } catch (error) {
+      next(error)
+    }
+  })
 
 // Metodo PUT
 router.put('/:id', async (req, res) => {
@@ -61,14 +69,16 @@ router.get('/filter', (req, res) => {
 
 
 // Metodo GET one product
-router.get('/:id', async (req, res, next) => {
-  try {
-    const {id} = req.params;
-    const product = await service.findOne(id)
-    res.json(product)
-  } catch (error) {
-    next(error)
-  }
-});
+router.get('/:id',
+  validatorHander(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const {id} = req.params;
+      const product = await service.findOne(id)
+      res.json(product)
+    } catch (error) {
+      next(error)
+    }
+  });
 
 module.exports = router
