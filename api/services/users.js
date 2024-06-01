@@ -1,11 +1,15 @@
 const { faker } = require('@faker-js/faker')
 const boom = require('@hapi/boom')
+const getConnection = require('../libs/postgres')
+const pool = require('../libs/postgresPool')
 
 class UsersService {
 
   constructor() {
     this.users = []
     this.generate()
+    this.pool = pool
+    this.pool.on('error', (err) => console.error(err))
   }
 
   async generate() {
@@ -30,7 +34,15 @@ class UsersService {
     return newUser
   }
   async find() {
-    return this.users
+    // SIN EL POOL
+    // const client = await getConnection()
+    // const rta = await client.query('SELECT * FROM tasks')
+    // return rta.rows
+
+    // CON EL POOL
+    const query = 'SELECT * FROM tasks'
+    const rta = await this.pool.query(query)
+    return rta.rows
   }
   async findOne(id) {
     const foundUser = this.users.findIndex(item => item.id === id)
